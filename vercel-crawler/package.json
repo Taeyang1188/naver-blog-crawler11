@@ -1,0 +1,17 @@
+{
+  "name": "naver-blog-crawler",
+  "version": "1.0.0",
+  "description": "네이버 블로그 크롤러 API",
+  "main": "api/analyze.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "puppeteer-core": "^21.0.0",
+    "chrome-aws-lambda": "^10.1.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
