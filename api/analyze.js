@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer-core';
 import chrome from 'chrome-aws-lambda';
 
 export default async function handler(req, res) {
-    // CORS 허용
+    // CORS 허용 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
