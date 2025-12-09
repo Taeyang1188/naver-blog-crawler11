@@ -28,36 +28,41 @@ export default async function handler(req, res) {
         });
 
         const page = await browser.newPage();
-        const url = `https://blog.naver.com/${blogId}/${logNo}`;
+        
+        // 모바일 버전으로 접속!
+        const url = `https://m.blog.naver.com/${blogId}/${logNo}`;
         
         await page.goto(url, { 
-            waitUntil: 'networkidle0',
+            waitUntil: 'networkidle2',
             timeout: 30000 
         });
 
-        // iframe으로 이동
-        const frames = page.frames();
-        const mainFrame = frames.find(f => f.url().includes('PostView'));
+        // JavaScript 렌더링 대기
+        await page.waitForTimeout(3000);
 
         let commentCount = 0;
         let likeCount = 0;
 
-        if (mainFrame) {
-            // 댓글 수
-            try {
-                const commentElement = await mainFrame.$('.num__OVfhz');
-                if (commentElement) {
-                    commentCount = parseInt(await mainFrame.evaluate(el => el.textContent, commentElement)) || 0;
-                }
-            } catch (e) {}
+        // 댓글 수 추출
+        try {
+            const commentElement = await page.$('.num__OVfhz');
+            if (commentElement) {
+                const text = await page.evaluate(el => el.textContent, commentElement);
+                commentCount = parseInt(text) || 0;
+            }
+        } catch (e) {
+            console.log('댓글 추출 실패:', e.message);
+        }
 
-            // 공감 수
-            try {
-                const likeElement = await mainFrame.$('.u_likeit_text._count.num');
-                if (likeElement) {
-                    likeCount = parseInt(await mainFrame.evaluate(el => el.textContent, likeElement)) || 0;
-                }
-            } catch (e) {}
+        // 공감 수 추출
+        try {
+            const likeElement = await page.$('.u_likeit_text._count.num');
+            if (likeElement) {
+                const text = await page.evaluate(el => el.textContent, likeElement);
+                likeCount = parseInt(text) || 0;
+            }
+        } catch (e) {
+            console.log('공감 추출 실패:', e.message);
         }
 
         await browser.close();
